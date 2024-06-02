@@ -1,18 +1,30 @@
 use chrono::*;
 use ev::SubmitEvent;
 use leptos::*;
+use leptos_meta::*;
 use leptos_router::*;
 use web_sys::js_sys::encode_uri_component;
 
 fn main() {
     mount_to_body(|| {
         view! {
-            <Router>
-                <App/>
-                <A href="https://github.com/chris13524/countdown">{"GitHub"}</A>
-            </Router>
+            <App/>
         }
     })
+}
+
+#[component]
+fn App() -> impl IntoView {
+    provide_meta_context();
+
+    view! {
+        <main>
+            <Router>
+                <Main />
+                <A href="https://github.com/chris13524/countdown">{"GitHub"}</A>
+            </Router>
+        </main>
+    }
 }
 
 #[derive(Params, PartialEq)]
@@ -22,7 +34,7 @@ struct QueryParams {
 }
 
 #[component]
-fn App() -> impl IntoView {
+fn Main() -> impl IntoView {
     let query: Memo<Result<QueryParams, ParamsError>> = use_query::<QueryParams>();
 
     move || {
@@ -64,8 +76,11 @@ fn Create() -> impl IntoView {
     let (name, set_name) = create_signal("".to_owned());
 
     let default_datetime = Local::now() + TimeDelta::minutes(1);
-    let (datetime, set_datetime) =
-        create_signal(default_datetime.format(INPUT_DATETIME_LOCAL_FMT).to_string());
+    let (datetime, set_datetime) = create_signal(
+        default_datetime
+            .format(INPUT_DATETIME_LOCAL_FMT)
+            .to_string(),
+    );
 
     let on_submit = move |ev: SubmitEvent| {
         ev.prevent_default();
@@ -90,6 +105,7 @@ fn Create() -> impl IntoView {
     };
 
     view! {
+        <Title text="Create countdown" />
         <h1>"Create countdown"</h1>
         <form on:submit=on_submit>
             <div>
@@ -124,13 +140,14 @@ fn update_countdown(to: DateTime<FixedOffset>, set_time_remaining: WriteSignal<T
 #[component]
 fn Countdown(to: DateTime<FixedOffset>, name: Option<String>) -> impl IntoView {
     let name = name
-        .map(|name| format!("Countdown to {name}"))
+        .map(|name| format!("{name} countdown"))
         .unwrap_or_else(|| "Countdown".to_owned());
 
     let (time_remaining, set_time_remaining) = create_signal(TimeDelta::max_value());
     update_countdown(to, set_time_remaining);
 
     view! {
+        <Title text=name.clone() />
         <div>
             <h1>{name}</h1>
             <p>"Time: "{to.to_string()}</p>
