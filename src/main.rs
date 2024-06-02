@@ -47,7 +47,7 @@ fn App() -> impl IntoView {
                 })
                 .unwrap_or_else(|e| {
                     view! {
-                        <p>{format!("{e:?}")}</p>
+                        <p>"Error: "{format!("{e:?}")}</p>
                     }
                     .into_view()
                 })
@@ -55,7 +55,7 @@ fn App() -> impl IntoView {
     }
 }
 
-const DATETIME_LOCAL_FMT: &str = "%FT%R";
+const INPUT_DATETIME_LOCAL_FMT: &str = "%FT%R";
 
 #[component]
 fn Create() -> impl IntoView {
@@ -65,7 +65,7 @@ fn Create() -> impl IntoView {
 
     let default_datetime = Local::now() + TimeDelta::minutes(1);
     let (datetime, set_datetime) =
-        create_signal(default_datetime.format(DATETIME_LOCAL_FMT).to_string());
+        create_signal(default_datetime.format(INPUT_DATETIME_LOCAL_FMT).to_string());
 
     let on_submit = move |ev: SubmitEvent| {
         ev.prevent_default();
@@ -74,7 +74,7 @@ fn Create() -> impl IntoView {
 
         let datetime = {
             let datetime =
-                NaiveDateTime::parse_from_str(&datetime.get(), DATETIME_LOCAL_FMT).unwrap();
+                NaiveDateTime::parse_from_str(&datetime.get(), INPUT_DATETIME_LOCAL_FMT).unwrap();
             let datetime = Local.from_local_datetime(&datetime).unwrap();
             datetime.to_rfc3339()
         };
