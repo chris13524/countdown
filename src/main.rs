@@ -9,6 +9,7 @@ fn main() {
         view! {
             <Router>
                 <App/>
+                <A href="https://github.com/chris13524/countdown">{"GitHub"}</A>
             </Router>
         }
     })
