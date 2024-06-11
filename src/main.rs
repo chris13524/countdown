@@ -146,12 +146,51 @@ fn Countdown(to: DateTime<FixedOffset>, name: Option<String>) -> impl IntoView {
     let (time_remaining, set_time_remaining) = create_signal(TimeDelta::max_value());
     update_countdown(to, set_time_remaining);
 
-    view! {
+    let styler_class = stylers::style! { "Countdown",
+        .remaining {
+            display: "grid";
+            grid-template-columns: "repeat(4, min-content auto) min-content";
+            grid-template-rows: "auto auto";
+            text-align: center;
+            justify-content: center;
+        }
+
+        .big {
+            font-size: 85px;
+        }
+    };
+
+    view! { class = styler_class,
         <Title text=name.clone() />
         <div>
             <h1>{name}</h1>
             <p>"Time: "{to.to_string()}</p>
-            <p>"Seconds: "{move || time_remaining.get().num_seconds()}</p>
+            <div class="remaining">
+                <div>
+                    <div class="big">{move || format!("{:02}", time_remaining.get().num_weeks())}</div>
+                    <div>"Weeks"</div>
+                </div>
+                <div class="big">:</div>
+                <div>
+                    <div class="big">{move || format!("{:02}", time_remaining.get().num_days() % 7)}</div>
+                    <div>"Days"</div>
+                </div>
+                <div class="big">:</div>
+                <div>
+                    <div class="big">{move || format!("{:02}", time_remaining.get().num_hours() % 24)}</div>
+                    <div>"Hours"</div>
+                </div>
+                <div class="big">:</div>
+                <div>
+                    <div class="big">{move || format!("{:02}", time_remaining.get().num_minutes() % 60)}</div>
+                    <div>"Minutes"</div>
+                </div>
+                <div class="big">:</div>
+                <div>
+                    <div class="big">{move || format!("{:02}", time_remaining.get().num_seconds() % 60)}</div>
+                    <div>"Seconds"</div>
+                </div>
+            </div>
             <A href="/">{"Create another"}</A>
         </div>
     }
